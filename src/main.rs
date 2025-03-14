@@ -1,5 +1,6 @@
 use reqwest::header::{HeaderMap, HeaderValue, CONTENT_TYPE};
 use std::collections::HashMap;
+use anyhow;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -10,8 +11,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .send()
         .await?;
 
-    let json = response.text().await?;
-    println!("{}", json);
+    print_response(response).await?;
 
     let mut headers = HeaderMap::new();
     headers.insert(CONTENT_TYPE, HeaderValue::from_str("application/json")?);
@@ -27,8 +27,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .send()
         .await?;
 
-    let json = response.text().await?;
-    println!("{}", json);
+    print_response(response).await?;
 
+    Ok(())
+}
+
+async fn print_response(response: reqwest::Response) -> anyhow::Result<()> {
+    let status = response.status().to_string();
+    println!("Status: {}", status);
+
+    println!("-----------------------------------");
+
+    let headers = response.headers();
+    println!("Headers: {:?}", headers);
+
+    println!("-----------------------------------");
+
+    let body = response.text().await?;
+    println!("Body: {}", body);
+
+    println!("----------------------------------------------------------------------|");
     Ok(())
 }
