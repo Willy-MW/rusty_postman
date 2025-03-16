@@ -1,6 +1,16 @@
+use clap::Parser;
+use clap_derive::Parser;
 use reqwest::header::{HeaderMap, HeaderValue, CONTENT_TYPE};
 use std::collections::HashMap;
-use anyhow;
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    #[arg(short, long)]
+    name: String,
+    #[arg(short, long, default_value = "1")]
+    count: u8,
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -28,6 +38,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
 
     print_response(response).await?;
+
+    let args = Args::parse();
+
+    for _ in 0..args.count {
+        println!("Hello {}!", args.name);
+    }
 
     Ok(())
 }
