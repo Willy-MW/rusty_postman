@@ -1006,6 +1006,7 @@ dependencies = [
  "clap",
  "clap_derive",
  "reqwest",
+ "serde_json",
  "tokio",
 ]
 
