@@ -1,6 +1,7 @@
-﻿use std::str::FromStr;
+﻿use clap_derive::ValueEnum;
+use std::str::FromStr;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum HttpMethod {
     GET,
     POST,

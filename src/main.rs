@@ -1,50 +1,21 @@
 use clap::Parser;
 use clap_derive::Parser;
 use reqwest::header::{HeaderMap, HeaderValue, CONTENT_TYPE};
+use reqwest::Method;
+use rusty_postman::client::HttpMethod;
 use std::collections::HashMap;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    #[arg(short, long)]
-    name: String,
-    #[arg(short, long, default_value = "1")]
-    count: u8,
+    method: HttpMethod,
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let client = reqwest::Client::new();
+    let args: Args = Args::parse();
 
-    let response = client
-        .get("https://jsonplaceholder.typicode.com/posts/1")
-        .send()
-        .await?;
-
-    print_response(response).await?;
-
-    let mut headers = HeaderMap::new();
-    headers.insert(CONTENT_TYPE, HeaderValue::from_str("application/json")?);
-
-    let json: HashMap<&str, &str> = [("title", "foo"), ("body", "bar"), ("userId", "1")]
-        .into_iter()
-        .collect();
-
-    let response = client
-        .post("https://jsonplaceholder.typicode.com/posts")
-        .headers(headers)
-        .json(&json)
-        .send()
-        .await?;
-
-    print_response(response).await?;
-
-    let args = Args::parse();
-
-    for _ in 0..args.count {
-        println!("Hello {}!", args.name);
-    }
-
+    println!("Chosen method: {:?}", args.method);
     Ok(())
 }
 
