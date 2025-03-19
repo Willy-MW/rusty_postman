@@ -1,9 +1,17 @@
-﻿use std::collections::HashMap;
-use std::time::Duration;
+﻿pub async fn print_response(response: reqwest::Response) -> anyhow::Result<()> {
+    let status = response.status().to_string();
+    println!("Status: {}", status);
 
-pub struct Response {
-    status: u16,
-    headers: HashMap<String, String>,
-    body: Vec<u8>,
-    timing: Duration,
+    println!("-----------------------------------");
+
+    let headers = response.headers();
+    println!("Headers: {:?}", headers);
+
+    println!("-----------------------------------");
+
+    let body = response.text().await?;
+    println!("Body: {}", body);
+
+    println!("----------------------------------------------------------------------|");
+    Ok(())
 }

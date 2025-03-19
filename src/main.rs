@@ -1,38 +1,19 @@
 use clap::Parser;
-use clap_derive::Parser;
-use reqwest::header::{HeaderMap, HeaderValue, CONTENT_TYPE};
-use reqwest::Method;
-use rusty_postman::client::HttpMethod;
-use std::collections::HashMap;
+use rusty_postman::request::RequestConfig;
+// use clap_derive::Parser;
+// use rusty_postman::client::HttpMethod;
 
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-struct Args {
-    method: HttpMethod,
-}
+// #[derive(Parser, Debug)]
+// #[command(version, about, long_about = None)]
+// struct Args {
+//     #[arg(value_enum)]
+//     method: HttpMethod,
+// }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Args = Args::parse();
+    let request: RequestConfig = RequestConfig::parse();
 
-    println!("Chosen method: {:?}", args.method);
-    Ok(())
-}
-
-async fn print_response(response: reqwest::Response) -> anyhow::Result<()> {
-    let status = response.status().to_string();
-    println!("Status: {}", status);
-
-    println!("-----------------------------------");
-
-    let headers = response.headers();
-    println!("Headers: {:?}", headers);
-
-    println!("-----------------------------------");
-
-    let body = response.text().await?;
-    println!("Body: {}", body);
-
-    println!("----------------------------------------------------------------------|");
+    println!("Chosen method: {:?}", request.method);
     Ok(())
 }
