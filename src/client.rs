@@ -1,4 +1,4 @@
-﻿use clap_derive::ValueEnum;
+﻿use clap_derive::{Parser, ValueEnum};
 use std::str::FromStr;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
@@ -10,6 +10,22 @@ pub enum HttpMethod {
     PATCH,
     HEAD,
     OPTIONS,
+}
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+pub struct Args {
+    #[arg(value_enum)]
+    pub method: HttpMethod,
+    pub url: String,
+    #[arg(long)]
+    pub headers: Option<String>,
+    #[arg(short, long)]
+    pub body: Option<String>,
+    #[arg(short, long)]
+    pub timeout: Option<String>,
+    #[arg(short, long)]
+    pub follow_redirects: bool,
 }
 
 impl FromStr for HttpMethod {

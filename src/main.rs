@@ -1,4 +1,5 @@
 use clap::Parser;
+use rusty_postman::client::Args;
 use rusty_postman::request::RequestConfig;
 // use clap_derive::Parser;
 // use rusty_postman::client::HttpMethod;
@@ -12,8 +13,8 @@ use rusty_postman::request::RequestConfig;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let request: RequestConfig = RequestConfig::parse();
+    let args: Args = Args::parse();
 
-    println!("Chosen method: {:?}", request.method);
+    println!("Chosen method: {:?}", args.method);
     Ok(())
 }
