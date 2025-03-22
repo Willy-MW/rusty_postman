@@ -1,45 +1,26 @@
-﻿use clap_derive::{Parser, ValueEnum};
-use std::str::FromStr;
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-pub enum HttpMethod {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    PATCH,
-    HEAD,
-    OPTIONS,
-}
+﻿use clap_derive::Parser;
+use reqwest::Method;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 pub struct Args {
     #[arg(value_enum)]
-    pub method: HttpMethod,
+    pub method: Method,
     pub url: String,
-    #[arg(long)]
-    pub headers: Option<String>,
+    #[arg(long, value_parser = parse_headers, num_args = 1.., value_delimiter = ' ')]
+    pub headers: Option<Vec<(String, String)>>,
     #[arg(short, long)]
     pub body: Option<String>,
     #[arg(short, long)]
-    pub timeout: Option<String>,
-    #[arg(short, long)]
+    pub timeout: Option<u64>,
+    #[arg(short, long, default_value = "true")]
     pub follow_redirects: bool,
 }
 
-impl FromStr for HttpMethod {
-    type Err = &'static str;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "GET" => Ok(HttpMethod::GET),
-            "POST" => Ok(HttpMethod::POST),
-            "PUT" => Ok(HttpMethod::PUT),
-            "DELETE" => Ok(HttpMethod::DELETE),
-            "PATCH" => Ok(HttpMethod::PATCH),
-            "HEAD" => Ok(HttpMethod::HEAD),
-            "OPTIONS" => Ok(HttpMethod::OPTIONS),
-            _ => Err("Unknown HTTP Method"),
-        }
+fn parse_headers(s: &str) -> Result<(String, String), String> {
+    let parts: Vec<&str> = s.splitn(2, ':').collect();
+    if parts.len() != 2 {
+        return Err(format!("Header must be in format 'key:value': {}", s));
     }
+    Ok((parts[0].to_string(), parts[1].to_string()))
 }
